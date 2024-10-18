@@ -32,21 +32,24 @@ dotenv.config()
 // Define a basic route
 
 app.get('/', (req, res)=>{
-   res.send('<h1>Hello there</h1>');
+   res.render('index');
  })
+
+ app.set('view engine','ejs')
+ app.set('views',__dirname + '/views')
 
 //Retireve all patients endpoint
 
-app.get('/patients', (req, res)=>{
-  const getPatients = "SELECT patient_id,first_name,last_name,date_of_birth FROM patients"
-  db.query(getPatients, (err, data)=>{
-    //if error in fetching data
-    if(err){
-      return res.status(400).send('Failed to Get patients data', err.message)
-        }
-        res.status(200).send(data)
-  })
-})
+app.get('/patients', (req, res) => {
+  const getPatients = "SELECT patient_id, first_name, last_name FROM patients";
+  db.query(getPatients, (err, data) => {
+      if (err) {
+          return res.status(400).send('Failed to Get patients data: ' + err.message);
+      }
+      //Rnder the 'data'  template and pass data
+      res.status(200).render('patients', { data})
+  });
+});
 
 //Retrive all Proividers
 app.get('/providers', (req, res)=>{
@@ -56,7 +59,7 @@ app.get('/providers', (req, res)=>{
     if(err){
       return res.status(400).send("Failed to fetch Providers", err.message)
     }
-    res.status(200).send(data)
+    res.status(200).render('providers', {data})
   })
 })
 
@@ -68,7 +71,7 @@ app.get('/firstname', (req, res)=>{
     if(err){
       return res.status(400).send('Failed to fetch first_name', err.message)
     }
-    res.status(200).send(data)
+    res.status(200).render('firstname', {data})
   })
 })
 
@@ -80,7 +83,7 @@ app.get('/speciality', (req, res)=>{
     if(err){
       return res.status(400).send('Failed to fetch speciality', err.message)
     }
-    res.status(200).send(data)
+    res.status(200).render('speciality', {data})
   })
 })
 
